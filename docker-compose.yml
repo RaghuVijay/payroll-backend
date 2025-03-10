@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  db:
+    container_name: payroll-db
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password # Ensure this matches the password in DBeaver
+      POSTGRES_DB: payroll
+    ports:
+      - '5434:5432'
+    networks:
+      - app-network
+    volumes:
+      - payroll:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U user -d payroll']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  payroll:
