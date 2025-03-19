@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Rbac } from '../rbac.entity';
 import { Repository } from 'typeorm';
-import { UserRoles } from '../auth_roles.entity';
+import { UserRoles } from 'src/roles/roles.entity';
 
 @Injectable()
 export class RoleBaseAccessProvider {

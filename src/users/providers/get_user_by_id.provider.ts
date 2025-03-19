@@ -75,7 +75,7 @@ export class GetUserByIdProvider {
     const users = await this.usersRepository.find({
       skip,
       take,
-      relations: ['cred'], // Include the related UserCreds data
+      relations: ['userCreds'], // Include the related UserCreds data
     });
 
     if (users.length === 0) {

@@ -1,47 +1,48 @@
+// src/user/entities/user-info.entity.ts
 import {
   Entity,
-  PrimaryGeneratedColumn,
   Column,
+  PrimaryGeneratedColumn,
+  OneToMany,
   OneToOne,
-  JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
+  JoinColumn,
 } from 'typeorm';
-import { UserCreds } from 'src/auth/auth.entity'; // Ensure the import path is correct
-import { Gender } from './enums/gender.enum'; // Ensure the import path is correct
+import { PayrollSummary } from 'src/payslip/payslip.entity';
+import { UserCreds } from 'src/auth/auth.entity';
 
 @Entity('user_info')
 export class UserInfo {
-  @PrimaryGeneratedColumn('uuid') // Primary key as UUID
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({
     type: 'varchar',
     length: 10,
-    unique: true, // Ensure the column is unique
-    default: () => "CONCAT('USER', LPAD(nextval('user_seq')::text, 4, '0'))", // Default value for code
+    unique: true,
+    default: () => `'USER' || TO_CHAR(NEXTVAL('user_seq'), 'FM0000')`,
   })
   code: string;
 
-  // Define a OneToOne relationship with UserCreds (Cascade Delete)
-  @OneToOne(() => UserCreds, (userCreds) => userCreds.userInfo, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'cred_code', referencedColumnName: 'code' })
-  cred: UserCreds;
+  @Column({ type: 'varchar', length: 10 })
+  cred_code: string;
 
-  @Column({ type: 'varchar', length: 255 }) // Name column
+  @Column({ type: 'varchar' })
   name: string;
 
-  @Column({ type: 'varchar', length: 255 }) // Surname column
+  @Column({ type: 'varchar' })
   surname: string;
 
-  @Column({ type: 'date' }) // Date of birth column
+  @Column({ type: 'date' })
   dob: Date;
 
-  @Column({ type: 'enum', enum: Gender }) // Gender column as an enum
-  gender: Gender;
+  @Column({ type: 'varchar' })
+  gender: string;
+
+  @Column({ type: 'varchar', length: 10 })
+  organization_code: string;
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
@@ -51,4 +52,13 @@ export class UserInfo {
 
   @DeleteDateColumn({ type: 'timestamp', nullable: true })
   deleted_at: Date;
+
+  @OneToMany(() => PayrollSummary, (payrollSummary) => payrollSummary.user, {
+    cascade: true,
+  })
+  payrollSummaries: PayrollSummary[];
+
+  @OneToOne(() => UserCreds, (userCreds) => userCreds.userInfo)
+  @JoinColumn({ name: 'cred_code', referencedColumnName: 'code' })
+  userCreds: UserCreds;
 }

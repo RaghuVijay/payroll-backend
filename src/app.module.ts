@@ -16,15 +16,19 @@ import { AccessTokenGuard } from './auth/guards/access-token/access-token.guard'
 import { AuthenticationGuard } from './auth/guards/authentication/authentication.guard';
 import { UsersModule } from './users/users.module';
 import { UserCreds } from './auth/auth.entity';
-import { UserRoles } from './auth/auth_roles.entity';
 import { OrganizationController } from './organization/organization.controller';
 import { OrganizationModule } from './organization/organization.module';
 import { UserInfo } from './users/users.entity';
 import { Features } from './auth/features.entity';
 import { Rbac } from './auth/rbac.entity';
 import { RolesGuard } from './auth/guards/rbac/rbac.guard';
-import { RolesController } from './roles/roles.controller';
+import { RoleController } from './roles/roles.controller';
 import { RolesModule } from './roles/roles.module';
+import { PayslipController } from './payslip/payslip.controller';
+import { PayslipModule } from './payslip/payslip.module';
+import { UserRoles } from './roles/roles.entity';
+import { PayrollSummary } from './payslip/payslip.entity';
+import { IncomeDetails } from './payslip/incomeDetails.entity';
 
 const ENV = process.env.NODE_ENV;
 
@@ -50,7 +54,15 @@ const ENV = process.env.NODE_ENV;
         host: configService.get('database.host'),
         database: configService.get('database.name'),
         migrations: [],
-        entities: [UserCreds, UserRoles, UserInfo, Features, Rbac],
+        entities: [
+          UserCreds,
+          UserInfo,
+          Features,
+          Rbac,
+          UserRoles,
+          PayrollSummary,
+          IncomeDetails,
+        ],
       }),
     }),
     ConfigModule.forFeature(jwtConfig),
@@ -58,13 +70,21 @@ const ENV = process.env.NODE_ENV;
     UsersModule,
     OrganizationModule,
     RolesModule,
+    PayslipModule,
+    PayslipModule,
   ],
-  controllers: [AppController, AuthController, OrganizationController, RolesController],
+  controllers: [
+    AppController,
+    AuthController,
+    OrganizationController,
+    RoleController,
+    PayslipController,
+  ],
   providers: [
     AppService,
     {
       provide: APP_GUARD,
-      useClass: AuthenticationGuard,
+      useClass: AuthenticationGuard, // Apply AuthenticationGuard globally
     },
     AccessTokenGuard,
     RolesGuard,

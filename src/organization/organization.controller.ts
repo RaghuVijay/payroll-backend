@@ -15,7 +15,6 @@ import { CreateOrganizationDto } from './dtos/organization.dto';
 import { UpdateOrganizationDto } from './dtos/update.organization.dto';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { AuthType } from 'src/auth/enums/auth-type.enum';
-import { Userroles } from 'src/auth/enums/userroles.enum';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 
 @Controller('organizations')
@@ -24,7 +23,7 @@ export class OrganizationController {
 
   // Create a new organization
   @Auth(AuthType.Bearer)
-  @Roles(Userroles.HR)
+  @Roles('ROLE0001')
   @Post()
   async create(@Body() createOrganizationDto: CreateOrganizationDto) {
     return await this.organizationService.create(createOrganizationDto);
@@ -32,7 +31,7 @@ export class OrganizationController {
 
   // Get all organizations (no ID provided)
   @Auth(AuthType.Bearer)
-  @Roles(Userroles.HR)
+  @Roles('ROLE0001')
   @Get()
   async findAll(@Query('skip') skip?: number, @Query('take') take?: number) {
     return await this.organizationService.find(undefined, skip, take);
@@ -40,7 +39,7 @@ export class OrganizationController {
 
   // Get one organization by ID (ID provided)
   @Auth(AuthType.Bearer)
-  @Roles(Userroles.HR)
+  @Roles('ROLE0001')
   @Get(':id')
   async findOne(@Param('id') id: string) {
     try {
@@ -55,7 +54,7 @@ export class OrganizationController {
 
   // Update an organization by ID
   @Auth(AuthType.Bearer)
-  @Roles(Userroles.HR, Userroles.ADMIN)
+  @Roles('ROLE0001')
   @Patch(':id')
   async update(
     @Param('id') id: string,
@@ -73,7 +72,7 @@ export class OrganizationController {
 
   // Soft delete an organization by ID
   @Auth(AuthType.Bearer)
-  @Roles(Userroles.HR)
+  @Roles('ROLE0001')
   @Delete(':id')
   async remove(@Param('id') id: string) {
     try {

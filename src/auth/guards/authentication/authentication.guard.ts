@@ -12,22 +12,20 @@ import { RolesGuard } from '../rbac/rbac.guard';
 
 @Injectable()
 export class AuthenticationGuard implements CanActivate {
-  // Set the default Auth Type
   private static readonly defaultAuthType = AuthType.Bearer;
 
-  // Create authTypeGuardMap
   private readonly authTypeGuardMap: Record<
     AuthType,
     CanActivate | CanActivate[]
   > = {
-    [AuthType.Bearer]: [this.accessTokenGuard, this.rolesGuard], // Include RolesGuard
+    [AuthType.Bearer]: [this.accessTokenGuard, this.rolesGuard], // Both guards must succeed
     [AuthType.None]: { canActivate: () => true },
   };
 
   constructor(
     private readonly reflector: Reflector,
     private readonly accessTokenGuard: AccessTokenGuard,
-    private readonly rolesGuard: RolesGuard, // Inject RolesGuard
+    private readonly rolesGuard: RolesGuard,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -38,21 +36,19 @@ export class AuthenticationGuard implements CanActivate {
 
     const guards = authTypes.map((type) => this.authTypeGuardMap[type]).flat();
 
-    // Declare the default error
-    let error = new UnauthorizedException();
-
+    // Ensure all guards succeed
     for (const instance of guards) {
       const canActivate = await Promise.resolve(
         instance.canActivate(context),
       ).catch((err) => {
-        error = err;
+        throw new UnauthorizedException(err.message); // Throw the original error
       });
 
-      if (canActivate) {
-        return true;
+      if (!canActivate) {
+        throw new UnauthorizedException('Access denied');
       }
     }
 
-    throw error;
+    return true;
   }
 }

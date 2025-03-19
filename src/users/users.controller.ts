@@ -30,7 +30,7 @@ export class UsersController {
    * @returns A list of users.
    */
   @Auth(AuthType.Bearer)
-  @Roles(Userroles.HR)
+  @Roles('ROLE0001')
   @Get()
   async getUsers(@Query('skip') skip?: number, @Query('take') take?: number) {
     try {
@@ -47,7 +47,7 @@ export class UsersController {
    * @returns The user with the specified code.
    */
   @Auth(AuthType.Bearer)
-  @Roles(Userroles.HR)
+  @Roles('ROLE0001')
   @Get(':code')
   async getUserByCode(@Param('code') code: string) {
     try {
@@ -65,7 +65,7 @@ export class UsersController {
    * @returns The updated user.
    */
   @Auth(AuthType.Bearer)
-  @Roles(...Object.values(Userroles))
+  @Roles('ROLE0001')
   @Patch(':code')
   async updateUser(
     @Param('code') code: string,
@@ -85,7 +85,7 @@ export class UsersController {
    * @returns A success message or void.
    */
   @Auth(AuthType.Bearer)
-  @Roles(Userroles.HR, Userroles.ADMIN)
+  @Roles('ROLE0001')
   @Delete(':code')
   async deleteUser(@Param('code') code: string) {
     try {

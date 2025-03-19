@@ -4,16 +4,18 @@ import {
   Inject,
   Injectable,
   UnauthorizedException,
+  Logger,
 } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { Observable } from 'rxjs';
 import jwtConfig from 'src/auth/config/jwt.config';
 import { Request } from 'express';
 import { REQUEST_USER_KEY } from 'src/auth/constants/auth.constants';
 
 @Injectable()
 export class AccessTokenGuard implements CanActivate {
+  private readonly logger = new Logger(AccessTokenGuard.name);
+
   constructor(
     private readonly jwtService: JwtService,
     @Inject(jwtConfig.KEY)
@@ -21,25 +23,32 @@ export class AccessTokenGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    // Extract the request from the execution context
     const request = context.switchToHttp().getRequest();
-    // Extract the token from the header
     const token = this.extractTokenFromHeader(request);
+
     if (!token) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Access token is missing');
     }
+
     try {
       const payload = await this.jwtService.verifyAsync(
         token,
         this.jwtConfiguration,
       );
+
+      if (!payload.role_codes) {
+        throw new UnauthorizedException('User roles are missing in the token');
+      }
+
       request[REQUEST_USER_KEY] = payload;
-    } catch {
-      console.log();
-      throw new UnauthorizedException();
+    } catch (error) {
+      this.logger.error('Invalid access token', error.stack);
+      throw new UnauthorizedException('Invalid access token');
     }
+
     return true;
   }
+
   private extractTokenFromHeader(request: Request): string | undefined {
     const [_, token] = request.headers.authorization?.split(' ') ?? [];
     return token;

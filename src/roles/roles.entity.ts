@@ -1,5 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, DeleteDateColumn, UpdateDateColumn, CreateDateColumn } from 'typeorm';
-import { Status } from './enums/statusType.enum'; 
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  DeleteDateColumn,
+  UpdateDateColumn,
+  CreateDateColumn,
+} from 'typeorm';
+import { Status } from './enums/statusType.enum';
 
 @Entity('user_roles')
 export class UserRoles {

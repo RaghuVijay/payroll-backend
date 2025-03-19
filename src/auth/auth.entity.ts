@@ -1,20 +1,21 @@
+// src/auth/entities/user-creds.entity.ts
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
   ManyToOne,
+  OneToOne,
   JoinColumn,
   Unique,
   DeleteDateColumn,
   UpdateDateColumn,
   CreateDateColumn,
-  OneToOne,
 } from 'typeorm';
-import { UserRoles } from './auth_roles.entity';
+import { UserRoles } from 'src/roles/roles.entity';
 import { UserInfo } from 'src/users/users.entity';
 
 @Entity('user_creds')
-@Unique(['email']) // Add a unique constraint on the `email` column
+@Unique(['email']) // Ensure email uniqueness
 export class UserCreds {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -49,6 +50,7 @@ export class UserCreds {
   @DeleteDateColumn({ type: 'timestamp', nullable: true })
   deleted_at: Date;
 
-  @OneToOne(() => UserInfo, (userInfo) => userInfo.cred)
+  @OneToOne(() => UserInfo, (userInfo) => userInfo.userCreds)
+  @JoinColumn({ name: 'id', referencedColumnName: 'cred_code' })
   userInfo: UserInfo;
 }

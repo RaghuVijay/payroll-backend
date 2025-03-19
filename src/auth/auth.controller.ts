@@ -36,25 +36,25 @@ export class AuthController {
     return res.json({ message: 'Sign-in successful' });
   }
   @Auth(AuthType.None)
-  @Roles(...Object.values(Userroles))
+  @Roles('ALL')
   @Post('refresh-token')
   public async refreshToken(@Body() refreshToken: RefreshToken) {
     return this.authService.refreshTokens(refreshToken);
   }
   @Auth(AuthType.Bearer)
-  @Roles(...Object.values(Userroles))
+  @Roles('ALL')
   @Post('change-password')
   public async changePassword(@Body() newPassword: ChangePasswordDto) {
     return this.authService.changePassword(newPassword);
   }
   @Get('/validate')
-  @Roles(...Object.values(Userroles))
+  @Roles('ALL')
   @Auth(AuthType.Bearer)
   public validaterRoute(@ActiveUser() user: ActiveUserData) {
     return user;
   }
   @Post('sign-up')
-  @Roles(Userroles.SUPERUSER, Userroles.HR, Userroles.ADMIN)
+  @Roles('SUPERUSER', 'HR', 'ADMIN')
   public async Signup(@Body() SignupDto: SignupDto) {
     return this.authService.signUpMembers(SignupDto);
   }

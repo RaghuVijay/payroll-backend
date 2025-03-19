@@ -6,7 +6,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { Features } from './features.entity';
-import { UserRoles } from './auth_roles.entity';
+import { UserRoles } from 'src/roles/roles.entity';
 
 @Entity('rbac')
 export class Rbac {
